@@ -1,0 +1,129 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik&display=swap');
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Rubik', sans-serif;
+  background: linear-gradient(135deg, #1f1c2c, #928dab);
+  min-height: 100vh;
+  color: #fff;
+}
+
+h1, h2 {
+  text-align: center;
+  color: #ffcc00;
+  font-weight: 600;
+  margin-bottom: 30px;
+}
+
+.form-container,
+.login-box,
+.glass-card,
+.card,
+.profile-container,
+.user-card {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  color: #fff;
+}
+
+.form-control,
+.form-select {
+  background-color: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #fff;
+}
+
+.form-control::placeholder,
+textarea::placeholder {
+  color: #ccc;
+}
+
+.form-control:focus,
+.form-select:focus {
+  background-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 5px rgba(255, 204, 0, 0.3);
+  color: #fff;
+}
+
+.btn-primary,
+.btn-success,
+.btn-warning,
+.btn-outline-primary {
+  background-color: #ffcc00;
+  color: #000;
+  font-weight: 600;
+  border: none;
+  transition: 0.3s;
+}
+
+.btn-primary:hover,
+.btn-success:hover,
+.btn-warning:hover {
+  background-color: #e6b800;
+  color: #000;
+}
+
+.btn-outline-primary {
+  border: 2px solid #ffcc00;
+  background: transparent;
+}
+
+.btn-outline-primary:hover {
+  background-color: #ffcc00;
+  color: #000;
+}
+
+.navbar {
+  background-color: rgba(0, 0, 0, 0.7) !important;
+  backdrop-filter: blur(8px);
+}
+
+.navbar-brand {
+  font-weight: bold;
+  color: #ffcc00 !important;
+}
+
+.nav-link {
+  color: #ddd !important;
+}
+
+.nav-link.active,
+.nav-link:hover {
+  color: #ffcc00 !important;
+}
+
+.avatar,
+.user-avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #ffcc00;
+  margin-bottom: 15px;
+}
+
+.card-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #ffcc00;
+}
+
+.section-title {
+  color: #ffcc00;
+  font-size: 1.3rem;
+  font-weight: 600;
+  border-left: 5px solid #ffcc00;
+  padding-left: 12px;
+  margin-bottom: 20px;
+}
+
+.list-group-item {
+  background-color: transparent;
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}

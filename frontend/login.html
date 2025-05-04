@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Rubik&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Rubik', sans-serif;
+      background: linear-gradient(135deg, #1f1c2c, #928dab);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .login-box {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      width: 100%;
+      max-width: 400px;
+      color: white;
+    }
+
+    .login-box h2 {
+      font-weight: 600;
+      color: #ffcc00;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .form-control {
+      background-color: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: #fff;
+    }
+
+    .form-control::placeholder {
+      color: #ccc;
+    }
+
+    .form-control:focus {
+      background-color: rgba(255, 255, 255, 0.15);
+      box-shadow: none;
+      color: #fff;
+    }
+
+    .btn-primary {
+      background-color: #ffcc00;
+      border: none;
+      color: #000;
+      font-weight: 600;
+    }
+
+    .btn-primary:hover {
+      background-color: #e6b800;
+    }
+
+    #message {
+      margin-top: 15px;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="login-box">
+    <h2>🔐 Giriş Yap</h2>
+    <div class="mb-3">
+      <input type="text" id="name" class="form-control" placeholder="Kullanıcı Adı">
+    </div>
+    <div class="mb-3">
+      <input type="password" id="password" class="form-control" placeholder="Şifre">
+    </div>
+    <div class="d-grid">
+      <button onclick="login()" class="btn btn-primary">Giriş Yap</button>
+    </div>
+    <p id="message"></p>
+  </div>
+  <div class="text-center mt-4">
+    <a href="index.html" class="btn btn-outline-light btn-sm">🏠 Back to Home Page</a>
+  </div>
+  
+
+  <script>
+    function login() {
+      const name = document.getElementById("name").value;
+      const password = document.getElementById("password").value;
+
+      fetch("http://127.0.0.1:5000/user/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ name, password })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.user_id) {
+          localStorage.setItem("user_id", data.user_id);
+          localStorage.setItem("is_admin", data.is_admin);
+          localStorage.setItem("name", name);
+          document.getElementById("message").innerHTML = "<span class='text-success'>✅ Giriş başarılı! Yönlendiriliyorsunuz...</span>";
+          setTimeout(() => {
+            if (data.is_admin) {
+              window.location.href = "index.html";
+            } else {
+              window.location.href = "index.html";
+            }
+          }, 1000);
+        } else {
+          document.getElementById("message").innerHTML = "<span class='text-danger'>❌ " + data.error + "</span>";
+        }
+      })
+      .catch(err => {
+        console.error("Giriş başarısız:", err);
+        document.getElementById("message").innerHTML = "<span class='text-warning'>⚠️ Sunucu hatası oluştu.</span>";
+      });
+    }
+  </script>
+</body>
+</html>

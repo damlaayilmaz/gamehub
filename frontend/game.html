@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Game Details</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #1a1a1d;
+      color: #ffffff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .game-title {
+      font-size: 2.75rem;
+      font-weight: bold;
+      color: #fca311;
+      text-shadow: 1px 1px 5px #000;
+    }
+
+    .card {
+      background-color: #2c2c2e;
+      border: none;
+      border-radius: 12px;
+      padding: 25px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    .section-title {
+      color: #fca311;
+      font-size: 1.3rem;
+      font-weight: 600;
+      border-left: 5px solid #fca311;
+      padding-left: 12px;
+      margin-bottom: 20px;
+    }
+
+    .btn-custom {
+      width: 200px;
+      border-radius: 20px;
+    }
+
+    input,
+    textarea,
+    select {
+      background-color: #3c3c3f;
+      color: #ffffff;
+      border: 1px solid #555;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: #aaa;
+    }
+
+    textarea,
+    select {
+      resize: none;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+      border-color: #fca311;
+      box-shadow: 0 0 5px rgba(252, 163, 17, 0.5);
+    }
+
+    li {
+      margin-bottom: 10px;
+      color: #e0e0e0;
+    }
+
+    .text-info,
+    .text-danger {
+      font-size: 0.95rem;
+    }
+
+    .btn {
+      font-weight: 500;
+    }
+
+    .btn-warning {
+      background-color: #fca311;
+      color: #1a1a1d;
+    }
+
+    .btn-warning:hover {
+      background-color: #e29500;
+    }
+
+    .btn-dark {
+      background-color: #1f1f1f;
+      border-color: #444;
+    }
+
+    .btn-dark:hover {
+      background-color: #333;
+    }
+
+    .btn-primary {
+      background-color: #007bff;
+      border-color: #007bff;
+    }
+
+    .btn-primary:hover {
+      background-color: #0069d9;
+    }
+
+    .btn-success:hover {
+      background-color: #218838;
+    }
+
+    .white-text p {
+      color: white !important;
+    }
+
+    @media (max-width: 768px) {
+
+      .btn-custom,
+      .form-control,
+      .form-select {
+        width: 100% !important;
+      }
+    }
+  </style>
+</head>
+
+<body class="p-4">
+  <div class="container">
+    <h1 id="game-name" class="game-title mb-4">🎮 Game</h1>
+    <div id="game-info"></div>
+  </div>
+  <div class="text-center mt-4">
+    <a href="index.html" class="btn btn-outline-light btn-sm">🏠 Ana Sayfaya Dön</a>
+  </div>
+
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const gameId = params.get("id");
+    const userId = localStorage.getItem("user_id");
+    const deneme = false;
+
+    let hasRated = false;
+
+    fetch(`http://127.0.0.1:5000/game/${gameId}`)
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("game-name").innerText = `🎮 ${data.name}`;
+
+        let html = `
+          <div class="card white-text">
+            <p><strong>Genres:</strong> ${data.genres.join(", ")}</p>
+            <p><strong>Average Rating:</strong> ${data.average_rating}</p>
+            <p><strong>Total Play Time:</strong> ${data.total_play_time} minutes</p>
+          </div>
+
+          <div class="card">
+            <h5 class="section-title">💬 Comments</h5>
+        `;
+
+        if (data.comments.length === 0) {
+          html += "<p>No comments yet.</p>";
+        } else {
+          html += "<ul>";
+          data.comments.forEach(c => {
+            html += `<li><strong>${c.user_name}:</strong> ${c.comment} (${c.play_time} min)</li>`;
+          });
+          html += "</ul>";
+        }
+
+
+        html += `</div><div class="card">
+          <h5 class="section-title">⏱️ Add Play Time</h5>
+          <input type="number" id="play-time" class="form-control w-25 mb-2" placeholder="Time in minutes">
+          <button onclick="submitPlayTime()" class="btn btn-dark btn-custom">Add Play Time</button>
+          <p id="play-msg" class="mt-2 text-info"></p>
+        </div>`;
+
+        if (data.ratings_enabled !== false) {
+          html += `
+    <div class="card">
+           <h5 class="section-title">⭐ Rate This Game</h5>
+           <select id="rating-select" class="form-select w-25 mb-2">
+             <option value="">Select a rating</option>
+             <option value="1">1 - Bad</option>
+             <option value="2">2 - Meh</option>
+             <option value="3">3 - Okay</option>
+             <option value="4">4 - Good</option>
+             <option value="5">5 - Excellent</option>
+           </select>
+           <button onclick="submitRating()" class="btn btn-primary btn-custom">Submit Rating</button>
+           <p id="rating-msg" class="mt-2 text-info"></p>
+         </div>
+  `;
+        }
+
+        // if (data.comments_enabled !== false) {
+        //  html += ` <div class="card" id="comment-section" style="display:none">
+        //     <h5 class="section-title">📝 Leave a Comment</h5>
+        //     <textarea id="comment-input" class="form-control w-50 mb-2" placeholder="Your thoughts..."></textarea>
+        //     <button onclick="submitComment()" class="btn btn-success btn-custom">Submit Comment</button>
+        //     <p id="comment-msg" class="mt-2 text-info"></p>
+        //   </div> `;
+        // } else {
+        //   document.getElementById("rating-msg").innerText += " (🛑 Comments are disabled for this game)";
+        // }
+
+        // {deneme ? 
+        //   <></> :
+        //    <></>}
+
+        //       if (data.ratings_enabled !== false) {
+        //         html += `
+        //   <div class="card">
+        //     <h5 class="section-title">⭐ Rate This Game</h5>
+        //     <select id="rating-select" class="form-select w-25 mb-2">
+        //       <option value="">Select a rating</option>
+        //       <option value="1">1 - Bad</option>
+        //       <option value="2">2 - Meh</option>
+        //       <option value="3">3 - Okay</option>
+        //       <option value="4">4 - Good</option>
+        //       <option value="5">5 - Excellent</option>
+        //     </select>
+        //     <button onclick="submitRating()" class="btn btn-primary btn-custom">Submit Rating</button>
+        //     <p id="rating-msg" class="mt-2 text-info"></p>
+        //   </div>
+        // `;
+        //       } else {
+        //         html += `
+        //   <div class="card">
+        //     <h5 class="section-title">⭐ Rate This Game</h5>
+        //     <p class="text-warning">🛑 Rating is disabled for this game.</p>
+        //   </div>
+        // `;
+        //       }
+
+
+        // html += `</div><div class="card">
+        //   <h5 class="section-title">⏱️ Add Play Time</h5>
+        //   <input type="number" id="play-time" class="form-control w-25 mb-2" placeholder="Time in minutes">
+        //   <button onclick="submitPlayTime()" class="btn btn-dark btn-custom">Add Play Time</button>
+        //   <p id="play-msg" class="mt-2 text-info"></p>
+        // </div>
+
+
+        //  <div class="card">
+        //    <h5 class="section-title">⭐ Rate This Game</h5>
+        //    <select id="rating-select" class="form-select w-25 mb-2">
+        //      <option value="">Select a rating</option>
+        //      <option value="1">1 - Bad</option>
+        //      <option value="2">2 - Meh</option>
+        //      <option value="3">3 - Okay</option>
+        //      <option value="4">4 - Good</option>
+        //      <option value="5">5 - Excellent</option>
+        //    </select>
+        //    <button onclick="submitRating()" class="btn btn-primary btn-custom">Submit Rating</button>
+        //    <p id="rating-msg" class="mt-2 text-info"></p>
+        //  </div>
+
+        // // <div class="card" id="comment-section" style="display:none">
+        // //   <h5 class="section-title">📝 Leave a Comment</h5>
+        // //   <textarea id="comment-input" class="form-control w-50 mb-2" placeholder="Your thoughts..."></textarea>
+        // //   <button onclick="submitComment()" class="btn btn-success btn-custom">Submit Comment</button>
+        // //   <p id="comment-msg" class="mt-2 text-info"></p>
+        // // </div>
+
+
+
+
+
+        // <div class="card">
+        //   <h5 class="section-title">💖 Add to Favorites</h5>
+        //   <button onclick="addToFavorites()" class="btn btn-warning btn-custom">❤️ Add</button>
+        //   <p id="fav-msg" class="mt-2 text-info"></p>
+        // </div>
+        // `;
+
+        document.getElementById("game-info").innerHTML = html;
+      })
+      .catch(err => {
+        document.getElementById("game-info").innerHTML = "<p class='text-danger'>Game not found or API error.</p>";
+        console.error(err);
+      });
+
+    function submitPlayTime() {
+      const duration = parseInt(document.getElementById("play-time").value);
+
+      if (!userId) {
+        document.getElementById("play-msg").innerText = "⚠️ Please log in first.";
+        return;
+      }
+
+      if (!duration || duration <= 0) {
+        document.getElementById("play-msg").innerText = "⚠️ Please enter a valid play time.";
+        return;
+      }
+
+      fetch(`http://127.0.0.1:5000/user/${userId}/play`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ game_id: gameId, duration })
+      })
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById("play-msg").innerText = data.msg ? "✅ " + data.msg : "❌ " + (data.error || "Unknown error");
+        })
+        .catch(err => {
+          console.error("Play time error:", err);
+          document.getElementById("play-msg").innerText = "⚠️ Server error.";
+        });
+    }
+
+    function submitRating() {
+      const rating = parseInt(document.getElementById("rating-select").value);
+
+      if (!userId) {
+        document.getElementById("rating-msg").innerText = "⚠️ Please log in first.";
+        return;
+      }
+
+      if (!rating || rating < 1 || rating > 5) {
+        document.getElementById("rating-msg").innerText = "⚠️ Please select a valid rating.";
+        return;
+      }
+
+      fetch(`http://127.0.0.1:5000/user/${userId}/rate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ game_id: gameId, rating })
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.msg) {
+            document.getElementById("rating-msg").innerText = "✅ " + data.msg;
+            hasRated = true;
+
+            if (data.comments_enabled !== false && userId) {
+              const commentCard = document.createElement("div");
+              commentCard.className = "card";
+              commentCard.innerHTML = `
+    <h5 class="section-title">📝 Leave a Comment</h5>
+    <textarea id="comment-input" class="form-control w-50 mb-2" placeholder="Your thoughts..."></textarea>
+    <button onclick="submitComment()" class="btn btn-success btn-custom">Submit Comment</button>
+    <p id="comment-msg" class="mt-2 text-info"></p>
+  `;
+              document.getElementById("game-info").appendChild(commentCard);
+            } else {
+              document.getElementById("rating-msg").innerText += " (🛑 Comments are disabled or you are not logged in)";
+            }
+          } else {
+            document.getElementById("rating-msg").innerText = "❌ " + (data.error || "Unknown error");
+          }
+        })
+        .catch(err => {
+          console.error("Rating error:", err);
+          document.getElementById("rating-msg").innerText = "⚠️ Server error.";
+        });
+    }
+
+    function submitComment() {
+      const comment = document.getElementById("comment-input").value;
+
+      if (!comment) {
+        document.getElementById("comment-msg").innerText = "⚠️ Comment cannot be empty.";
+        return;
+      }
+
+      fetch(`http://127.0.0.1:5000/user/${userId}/comment`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ game_id: gameId, comment })
+      })
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById("comment-msg").innerText = data.msg ? "✅ " + data.msg : "❌ " + (data.error || "Unknown error");
+        })
+        .catch(err => {
+          console.error("Comment error:", err);
+          document.getElementById("comment-msg").innerText = "⚠️ Server error.";
+        });
+    }
+
+    function addToFavorites() {
+      if (!userId) {
+        document.getElementById("fav-msg").innerText = "⚠️ Please log in first.";
+        return;
+      }
+
+      fetch(`http://127.0.0.1:5000/user/${userId}/favorite`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ game_id: gameId })
+      })
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById("fav-msg").innerText = data.msg || data.error || "Unknown response.";
+        })
+        .catch(err => {
+          console.error("Favorite error:", err);
+          document.getElementById("fav-msg").innerText = "⚠️ Server error.";
+        });
+    }
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>All Users</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Rubik&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(to right, #141e30, #243b55);
+      font-family: 'Rubik', sans-serif;
+      color: #fff;
+      min-height: 100vh;
+      padding: 30px 15px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 40px;
+      font-weight: bold;
+    }
+
+    .user-card {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 25px;
+      text-align: center;
+      color: #fff;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    }
+
+    .user-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.25);
+    }
+
+    .user-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #ffc107;
+      margin-bottom: 15px;
+    }
+
+    .btn-outline-success,
+    .btn-danger {
+      border-radius: 30px;
+    }
+
+    #message {
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    .btn-group {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>👥 User List</h1>
+    <div class="row" id="user-list"></div>
+    <p id="message" class="text-warning mt-3"></p>
+  </div>
+  <div class="text-center mt-4">
+    <a href="index.html" class="btn btn-outline-light btn-sm">🏠 Back to Home Page</a>
+  </div>
+  
+
+  <script>
+    const isAdmin = localStorage.getItem("is_admin") === "true";
+
+    fetch("http://127.0.0.1:5000/users")
+      .then(res => res.json())
+      .then(users => {
+        const userList = document.getElementById("user-list");
+
+        if (users.length === 0) {
+          document.getElementById("message").innerText = "No users found.";
+          return;
+        }
+
+        users.forEach(user => {
+          const col = document.createElement("div");
+          col.className = "col-md-4 mb-4";
+
+          col.innerHTML = `
+            <div class="user-card">
+              <img src="https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(user.name)}" alt="Avatar" class="user-avatar">
+              <h5>${user.name}</h5>
+              <div class="btn-group">
+                <a href="user.html?id=${user._id}" class="btn btn-outline-success btn-sm">View Profile</a>
+                ${
+                  isAdmin
+                    ? `<button class="btn btn-danger btn-sm" onclick="deleteUser('${user._id}')">Delete</button>`
+                    : ""
+                }
+              </div>
+            </div>
+          `;
+
+          userList.appendChild(col);
+        });
+      })
+      .catch(err => {
+        console.error("Failed to load users:", err);
+        document.getElementById("message").innerText = "⚠️ Server error occurred.";
+      });
+
+    function deleteUser(userId) {
+      if (!confirm("Are you sure you want to delete this user?")) return;
+
+      fetch(`http://127.0.0.1:5000/user/${userId}`, {
+        method: "DELETE"
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.msg) {
+          alert("✅ User deleted successfully.");
+          window.location.reload();
+        } else {
+          alert("❌ Error: " + (data.error || "Unknown error"));
+        }
+      })
+      .catch(err => {
+        console.error("Delete error:", err);
+        alert("⚠️ Server error occurred.");
+      });
+    }
+  </script>
+</body>
+</html>

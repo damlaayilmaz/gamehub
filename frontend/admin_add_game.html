@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - Add Game</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Rubik&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to right, #141e30, #243b55);
+      font-family: 'Rubik', sans-serif;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .form-container {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(14px);
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+      width: 100%;
+      max-width: 600px;
+      color: #fff;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-weight: 600;
+      font-size: 28px;
+      color: #ffcc00;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    .input-group-text {
+      background-color: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: #ffc107;
+      font-weight: bold;
+      border-radius: 10px 0 0 10px;
+    }
+
+    .form-control {
+      background-color: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: #fff;
+      border-radius: 0 10px 10px 0;
+    }
+
+    .form-control::placeholder {
+      color: #ccc;
+    }
+
+    .form-control:focus {
+      background-color: rgba(255, 255, 255, 0.15);
+      box-shadow: none;
+      color: #fff;
+    }
+
+    .btn-success {
+      background-color: #ffcc00;
+      border: none;
+      font-weight: 600;
+      color: #000;
+      transition: 0.3s;
+    }
+
+    .btn-success:hover {
+      background-color: #e6b800;
+    }
+
+    #msg {
+      margin-top: 15px;
+      font-weight: 500;
+      text-align: center;
+    }
+    .btn-outline-light {
+  border-color: #ffcc00;
+  color: #ffcc00;
+}
+
+.btn-outline-light:hover {
+  background-color: #ffcc00;
+  color: #000;
+}
+
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h1>🎮 Add New Game</h1>
+    <div id="form-section">
+      <div class="input-group">
+        <span class="input-group-text"><i class="fa-solid fa-gamepad"></i></span>
+        <input type="text" class="form-control" id="game-name" placeholder="Name of Game">
+      </div>
+
+      <div class="input-group">
+        <span class="input-group-text"><i class="fa-solid fa-tags"></i></span>
+        <input type="text" class="form-control" id="genres" placeholder="Genres (Ex: Action, RPG)">
+      </div>
+
+      <div class="input-group">
+        <span class="input-group-text"><i class="fa-solid fa-image"></i></span>
+        <input type="text" class="form-control" id="photo" placeholder="Cover Image URL">
+      </div>
+
+      <button onclick="submitGame()" class="btn btn-success w-100 mt-2"><i class="fa-solid fa-plus"></i> Add</button>
+      <p id="msg" class="text-info"></p>
+    </div>
+  </div>
+  <div class="text-center mt-4">
+    <a href="index.html" class="btn btn-outline-light btn-sm">🏠 Back to Home Page</a>
+  </div>
+  
+
+  <script>
+    function submitGame() {
+      const name = document.getElementById("game-name").value;
+      const genres = document.getElementById("genres").value;
+      const photo = document.getElementById("photo").value;
+
+      if (!name || !genres || !photo) {
+        document.getElementById("msg").innerText = "❗ Tüm alanları doldurun.";
+        return;
+      }
+
+      fetch("http://127.0.0.1:5000/games", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ name, genres, photo })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.msg) {
+          document.getElementById("msg").innerText = "✅ " + data.msg;
+          document.getElementById("msg").className = "text-success";
+        } else if (data.error) {
+          document.getElementById("msg").innerText = "❌ " + data.error;
+          document.getElementById("msg").className = "text-danger";
+        } else {
+          document.getElementById("msg").innerText = "⚠️ Bilinmeyen bir hata.";
+          document.getElementById("msg").className = "text-warning";
+        }
+      })
+      .catch(error => {
+        console.error("Hata:", error);
+        document.getElementById("msg").innerText = "⚠️ Sunucu hatası.";
+        document.getElementById("msg").className = "text-warning";
+      });
+    }
+  </script>
+</body>
+</html>

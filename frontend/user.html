@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Profile</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Rubik&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(to right, #141e30, #243b55);
+      font-family: 'Rubik', sans-serif;
+      min-height: 100vh;
+      color: #fff;
+      padding: 30px 15px;
+    }
+
+    .profile-container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      padding: 25px;
+      margin-bottom: 25px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .glass-card h5 {
+      color: #ffcc00;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    .avatar {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      border: 3px solid #ffcc00;
+      object-fit: cover;
+      margin-bottom: 15px;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 600;
+      color: #fff;
+      text-align: center;
+    }
+
+    .list-group-item {
+      background-color: transparent;
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .list-group-item strong {
+      color: #ffc107;
+    }
+
+    #error {
+      text-align: center;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="profile-container">
+    <div class="text-center mb-4">
+      <img id="avatar" class="avatar" src="" alt="Avatar">
+      <h1 id="user-name">👤 Kullanıcı Profili</h1>
+    </div>
+
+    <div id="user-info"></div>
+    <p id="error" class="text-danger"></p>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const userId = params.get("id");
+
+    fetch(`http://127.0.0.1:5000/user/${userId}`)
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("user-name").innerText = `👤 ${data.name}`;
+        document.getElementById("avatar").src = `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(data.name)}`;
+
+        const html = `
+          <div class="glass-card">
+            <h5><i class="fa-solid fa-user"></i> Genel Bilgiler</h5>
+            <p><strong>Toplam Oynama Süresi:</strong> ${data.total_play_time} dakika</p>
+            <p><strong>Ortalama Puan:</strong> ${data.average_rating}</p>
+            <p><strong>En Çok Oynanan Oyun:</strong> ${data.most_played_game || "N/A"}</p>
+          </div>
+
+          <div class="glass-card">
+            <h5><i class="fa-solid fa-chart-line"></i> İstatistikler</h5>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">🎮 Oynanan Oyun Sayısı: ${data.stats.games_played}</li>
+              <li class="list-group-item">⏱️ Ortalama Oturum Süresi: ${data.stats.avg_session_time} dakika</li>
+              <li class="list-group-item">💬 Yapılan Yorumlar: ${data.stats.comments_made}</li>
+            </ul>
+          </div>
+
+          <div class="glass-card">
+            <h5><i class="fa-solid fa-clock-rotate-left"></i> Son Oynananlar</h5>
+            ${
+              data.recently_played.length === 0
+              ? "<p>Son oynanan oyun yok.</p>"
+              : `<ul class="list-group list-group-flush">` +
+                data.recently_played.map(g => `<li class="list-group-item">${g.game_name} - ${g.played_at}</li>`).join("") +
+                `</ul>`
+            }
+          </div>
+
+          <div class="glass-card">
+            <h5><i class="fa-solid fa-comments"></i> Yorumlar</h5>
+            ${
+              data.comments.length === 0
+              ? "<p>Yorum yapılmamış.</p>"
+              : `<ul class="list-group list-group-flush">` +
+                data.comments.map(c => `<li class="list-group-item"><strong>${c.game_name}:</strong> ${c.comment} (${c.play_time} dk)</li>`).join("") +
+                `</ul>`
+            }
+          </div>
+        `;
+
+        document.getElementById("user-info").innerHTML = html;
+      })
+      .catch(err => {
+        console.error("User data error:", err);
+        document.getElementById("error").innerText = "❌ Kullanıcı bilgileri alınamadı veya API hatası.";
+      });
+  </script>
+</body>
+</html>
