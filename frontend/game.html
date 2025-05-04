@@ -144,7 +144,8 @@
 
     let hasRated = false;
 
-    fetch(`http://127.0.0.1:5000/game/${gameId}`)
+    fetch(`/game/${gameId}`)
+
       .then(res => res.json())
       .then(data => {
         document.getElementById("game-name").innerText = `🎮 ${data.name}`;
@@ -196,86 +197,7 @@
   `;
         }
 
-        // if (data.comments_enabled !== false) {
-        //  html += ` <div class="card" id="comment-section" style="display:none">
-        //     <h5 class="section-title">📝 Leave a Comment</h5>
-        //     <textarea id="comment-input" class="form-control w-50 mb-2" placeholder="Your thoughts..."></textarea>
-        //     <button onclick="submitComment()" class="btn btn-success btn-custom">Submit Comment</button>
-        //     <p id="comment-msg" class="mt-2 text-info"></p>
-        //   </div> `;
-        // } else {
-        //   document.getElementById("rating-msg").innerText += " (🛑 Comments are disabled for this game)";
-        // }
 
-        // {deneme ? 
-        //   <></> :
-        //    <></>}
-
-        //       if (data.ratings_enabled !== false) {
-        //         html += `
-        //   <div class="card">
-        //     <h5 class="section-title">⭐ Rate This Game</h5>
-        //     <select id="rating-select" class="form-select w-25 mb-2">
-        //       <option value="">Select a rating</option>
-        //       <option value="1">1 - Bad</option>
-        //       <option value="2">2 - Meh</option>
-        //       <option value="3">3 - Okay</option>
-        //       <option value="4">4 - Good</option>
-        //       <option value="5">5 - Excellent</option>
-        //     </select>
-        //     <button onclick="submitRating()" class="btn btn-primary btn-custom">Submit Rating</button>
-        //     <p id="rating-msg" class="mt-2 text-info"></p>
-        //   </div>
-        // `;
-        //       } else {
-        //         html += `
-        //   <div class="card">
-        //     <h5 class="section-title">⭐ Rate This Game</h5>
-        //     <p class="text-warning">🛑 Rating is disabled for this game.</p>
-        //   </div>
-        // `;
-        //       }
-
-
-        // html += `</div><div class="card">
-        //   <h5 class="section-title">⏱️ Add Play Time</h5>
-        //   <input type="number" id="play-time" class="form-control w-25 mb-2" placeholder="Time in minutes">
-        //   <button onclick="submitPlayTime()" class="btn btn-dark btn-custom">Add Play Time</button>
-        //   <p id="play-msg" class="mt-2 text-info"></p>
-        // </div>
-
-
-        //  <div class="card">
-        //    <h5 class="section-title">⭐ Rate This Game</h5>
-        //    <select id="rating-select" class="form-select w-25 mb-2">
-        //      <option value="">Select a rating</option>
-        //      <option value="1">1 - Bad</option>
-        //      <option value="2">2 - Meh</option>
-        //      <option value="3">3 - Okay</option>
-        //      <option value="4">4 - Good</option>
-        //      <option value="5">5 - Excellent</option>
-        //    </select>
-        //    <button onclick="submitRating()" class="btn btn-primary btn-custom">Submit Rating</button>
-        //    <p id="rating-msg" class="mt-2 text-info"></p>
-        //  </div>
-
-        // // <div class="card" id="comment-section" style="display:none">
-        // //   <h5 class="section-title">📝 Leave a Comment</h5>
-        // //   <textarea id="comment-input" class="form-control w-50 mb-2" placeholder="Your thoughts..."></textarea>
-        // //   <button onclick="submitComment()" class="btn btn-success btn-custom">Submit Comment</button>
-        // //   <p id="comment-msg" class="mt-2 text-info"></p>
-        // // </div>
-
-
-
-
-
-        // <div class="card">
-        //   <h5 class="section-title">💖 Add to Favorites</h5>
-        //   <button onclick="addToFavorites()" class="btn btn-warning btn-custom">❤️ Add</button>
-        //   <p id="fav-msg" class="mt-2 text-info"></p>
-        // </div>
-        // `;
 
         document.getElementById("game-info").innerHTML = html;
       })
@@ -297,7 +219,7 @@
         return;
       }
 
-      fetch(`http://127.0.0.1:5000/user/${userId}/play`, {
+      fetch(`/user/${userId}/play`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ game_id: gameId, duration })
@@ -325,7 +247,7 @@
         return;
       }
 
-      fetch(`http://127.0.0.1:5000/user/${userId}/rate`, {
+      fetch(`/user/${userId}/rate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ game_id: gameId, rating })
@@ -367,7 +289,7 @@
         return;
       }
 
-      fetch(`http://127.0.0.1:5000/user/${userId}/comment`, {
+      fetch(`/user/${userId}/comment`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ game_id: gameId, comment })
@@ -388,7 +310,7 @@
         return;
       }
 
-      fetch(`http://127.0.0.1:5000/user/${userId}/favorite`, {
+      fetch(`/user/${userId}/favorite`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ game_id: gameId })
