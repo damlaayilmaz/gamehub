@@ -167,11 +167,11 @@
     function toggleRatingsForAll() {
   const userId = localStorage.getItem("user_id");
 
-  fetch("http://127.0.0.1:5000/games")
+  fetch("/games")
     .then(res => res.json())
     .then(games => {
       games.forEach(game => {
-        fetch(`http://127.0.0.1:5000/game/${game._id}/toggle-ratings?user_id=${userId}`, {
+        fetch(`/game/${game._id}/toggle-ratings?user_id=${userId}`, {
           method: "PATCH"
         })
         .then(res => res.json())
@@ -195,7 +195,7 @@
 
   
     // Fetch games
-    fetch("http://127.0.0.1:5000/games")
+    fetch("/games")
       .then(response => response.json())
       .then(data => {
         const container = document.getElementById("games");
@@ -235,7 +235,7 @@
     function deleteGame(gameId, userId) {
       if (!confirm("Are you sure you want to delete this game?")) return;
   
-      fetch(`http://127.0.0.1:5000/game/${gameId}?user_id=${userId}`, {
+      fetch(`/game/${gameId}?user_id=${userId}`, {
         method: "DELETE"
       })
       .then(res => res.json())
@@ -255,7 +255,7 @@
   
     // Toggle comments function
     function toggleComments(gameId) {
-      fetch(`http://127.0.0.1:5000/game/${gameId}/toggle-comments`, {
+      fetch(`/game/${gameId}/toggle-comments`, {
         method: "PATCH"
       })
       .then(res => res.json())
@@ -274,7 +274,7 @@
     }
     // Toggle comments function
     function toggleRatings(gameId) {
-      fetch(`http://127.0.0.1:5000/game/${gameId}/toggle-ratings`, {
+      fetch(`/game/${gameId}/toggle-ratings`, {
         method: "PATCH"
       })
       .then(res => res.json())

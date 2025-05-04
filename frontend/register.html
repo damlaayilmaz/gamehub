@@ -100,7 +100,7 @@
       const password = document.getElementById("password").value;
       const isAdmin = document.getElementById("isAdmin").checked;
 
-      fetch("http://127.0.0.1:5000/user", {
+      fetch("/user", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

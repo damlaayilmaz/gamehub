@@ -71,7 +71,7 @@
   <div class="profile-container">
     <div class="text-center mb-4">
       <img id="avatar" class="avatar" src="" alt="Avatar">
-      <h1 id="user-name">👤 Kullanıcı Profili</h1>
+      <h1 id="user-name">👤 User Profile</h1>
     </div>
 
     <div id="user-info"></div>
@@ -82,7 +82,7 @@
     const params = new URLSearchParams(window.location.search);
     const userId = params.get("id");
 
-    fetch(`http://127.0.0.1:5000/user/${userId}`)
+    fetch(`/user/${userId}`)
       .then(res => res.json())
       .then(data => {
         document.getElementById("user-name").innerText = `👤 ${data.name}`;
@@ -90,23 +90,23 @@
 
         const html = `
           <div class="glass-card">
-            <h5><i class="fa-solid fa-user"></i> Genel Bilgiler</h5>
+            <h5><i class="fa-solid fa-user"></i> General Information</h5>
             <p><strong>Toplam Oynama Süresi:</strong> ${data.total_play_time} dakika</p>
             <p><strong>Ortalama Puan:</strong> ${data.average_rating}</p>
             <p><strong>En Çok Oynanan Oyun:</strong> ${data.most_played_game || "N/A"}</p>
           </div>
 
           <div class="glass-card">
-            <h5><i class="fa-solid fa-chart-line"></i> İstatistikler</h5>
+            <h5><i class="fa-solid fa-chart-line"></i> Statistics</h5>
             <ul class="list-group list-group-flush">
-              <li class="list-group-item">🎮 Oynanan Oyun Sayısı: ${data.stats.games_played}</li>
-              <li class="list-group-item">⏱️ Ortalama Oturum Süresi: ${data.stats.avg_session_time} dakika</li>
-              <li class="list-group-item">💬 Yapılan Yorumlar: ${data.stats.comments_made}</li>
+              <li class="list-group-item">🎮 Number of Games Played: ${data.stats.games_played}</li>
+              <li class="list-group-item">⏱️ Average Session Duration: ${data.stats.avg_session_time} Minutes</li>
+              <li class="list-group-item">💬 Comments Made: ${data.stats.comments_made}</li>
             </ul>
           </div>
 
           <div class="glass-card">
-            <h5><i class="fa-solid fa-clock-rotate-left"></i> Son Oynananlar</h5>
+            <h5><i class="fa-solid fa-clock-rotate-left"></i> Last </h5>
             ${
               data.recently_played.length === 0
               ? "<p>Son oynanan oyun yok.</p>"
@@ -117,7 +117,7 @@
           </div>
 
           <div class="glass-card">
-            <h5><i class="fa-solid fa-comments"></i> Yorumlar</h5>
+            <h5><i class="fa-solid fa-comments"></i> Comments</h5>
             ${
               data.comments.length === 0
               ? "<p>Yorum yapılmamış.</p>"
@@ -132,7 +132,7 @@
       })
       .catch(err => {
         console.error("User data error:", err);
-        document.getElementById("error").innerText = "❌ Kullanıcı bilgileri alınamadı veya API hatası.";
+        document.getElementById("error").innerText = "❌ Failed to retrieve user information or API error.";
       });
   </script>
 </body>

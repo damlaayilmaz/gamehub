@@ -94,7 +94,7 @@
       const name = document.getElementById("name").value;
       const password = document.getElementById("password").value;
 
-      fetch("http://127.0.0.1:5000/user/login", {
+      fetch("/user/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -107,7 +107,7 @@
           localStorage.setItem("user_id", data.user_id);
           localStorage.setItem("is_admin", data.is_admin);
           localStorage.setItem("name", name);
-          document.getElementById("message").innerHTML = "<span class='text-success'>✅ Giriş başarılı! Yönlendiriliyorsunuz...</span>";
+          document.getElementById("message").innerHTML = "<span class='text-success'>✅ Login successful! You are being redirected...</span>";
           setTimeout(() => {
             if (data.is_admin) {
               window.location.href = "index.html";
@@ -120,8 +120,8 @@
         }
       })
       .catch(err => {
-        console.error("Giriş başarısız:", err);
-        document.getElementById("message").innerHTML = "<span class='text-warning'>⚠️ Sunucu hatası oluştu.</span>";
+        console.error("Failed:", err);
+        document.getElementById("message").innerHTML = "<span class='text-warning'>⚠️ Server Error.</span>";
       });
     }
   </script>

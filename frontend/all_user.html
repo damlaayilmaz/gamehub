@@ -82,7 +82,7 @@
   <script>
     const isAdmin = localStorage.getItem("is_admin") === "true";
 
-    fetch("http://127.0.0.1:5000/users")
+    fetch("/users")
       .then(res => res.json())
       .then(users => {
         const userList = document.getElementById("user-list");
@@ -122,7 +122,7 @@
     function deleteUser(userId) {
       if (!confirm("Are you sure you want to delete this user?")) return;
 
-      fetch(`http://127.0.0.1:5000/user/${userId}`, {
+      fetch(`/user/${userId}`, {
         method: "DELETE"
       })
       .then(res => res.json())
